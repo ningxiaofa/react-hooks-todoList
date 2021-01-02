@@ -5,7 +5,8 @@ import TdList from './List'
 const TodoList = () => {
     return (
         <div className="todo-list">
-            <TdInput />
+            {/* 传入临时属性 addTodo={() => {}} todoList={[]} */}
+            <TdInput addTodo={() => {}} todoList={[]}/>
             <TdList />
         </div>
     )
