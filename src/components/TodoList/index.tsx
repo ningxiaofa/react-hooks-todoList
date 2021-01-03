@@ -5,8 +5,15 @@ import TdList from './List'
 import { ACTION_TYPE, IState, ITodo } from './typings'
 import { todoReducer } from './reducer'
 
-const initialState: IState = {
-    todoList: []
+// const initialState: IState = {
+//     todoList: []
+// }
+
+// 优化：惰性初始化
+function init(initialState: ITodo[]): IState {
+    return {
+        todoList: initialState
+    }
 }
 
 const TodoList: FC = (): ReactElement => {
@@ -16,11 +23,23 @@ const TodoList: FC = (): ReactElement => {
 
     // useReducer 比 useState 更好的解决方案, 但也有适用条件
     // https://react.docschina.org/docs/hooks-reference.html#usereducer
-    const [state, dispatch] = useReducer(todoReducer, initialState)
+    // const [state, dispatch] = useReducer(todoReducer, initialState)
+    const [state, dispatch] = useReducer(todoReducer, [], init) // 惰性初始化
 
     // https://react.docschina.org/docs/hooks-effect.html
     useEffect(() => {
-        console.log(state.todoList);
+        // console.log(state.todoList);
+
+        // 放入 localStorage
+        const todoList = JSON.parse(localStorage.getItem('todoList') || '[]')
+        dispatch({
+            type: ACTION_TYPE.INIT_TODOLIST,
+            payload: todoList
+        })
+    }, [])
+
+    useEffect(() => {
+        localStorage.setItem('todoList', JSON.stringify(state.todoList))
     }, [state.todoList])
 
     // 关于父组件传递props[属性与方法], 父组件更新, 子组件并不需要更新的情况, 函数句柄会重新生成, 不符合性能优化.
@@ -35,11 +54,17 @@ const TodoList: FC = (): ReactElement => {
     }, [])
 
     const removeTodo = useCallback((id: number): void => {
-     
+        dispatch({
+            type: ACTION_TYPE.REMOVE_TODO,
+            payload: id
+        })
     }, [])
 
     const toggleTodo = useCallback((id: number): void => {
-       
+        dispatch({
+            type: ACTION_TYPE.TOGGLE_TODO,
+            payload: id
+        })
     }, [])
 
     return (

@@ -24,7 +24,7 @@ const TdItem: FC<IProps> = ({
             />
             <span
                 style={{
-                    textDecoration: completed ? 'line-througn' : 'none'
+                    textDecoration: completed ? 'line-through' : 'none'
                 }}
             >{content}</span>
             <button onClick={() => removeTodo(id)}>删除</button>
